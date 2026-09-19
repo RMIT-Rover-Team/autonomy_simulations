@@ -1,0 +1,43 @@
+costmap:
+  # costmap:
+  ros__parameters:
+    update_frequency: 1.0
+    publish_frequency: 1.0
+    global_frame: map
+    robot_base_frame: base_footprint
+    use_sim_time: true
+    robot_radius: 0.27
+    resolution: 0.05
+    always_send_full_costmap: true
+    track_unknown_space: true
+
+    plugins: ["static_layer", "obstacle_layer", "inflation_layer"] # order matters
+
+    static_layer:
+      plugin: "nav2_costmap_2d::StaticLayer"
+      map_topic: /map
+      map_subscribe_transient_local: true
+
+    obstacle_layer:
+      plugin: "nav2_costmap_2d::ObstacleLayer"
+      enabled: true
+      observation_sources: scan # "source1 source2"
+      scan:
+        topic: /scan
+        data_type: "LaserScan"
+        max_obstacle_height: 2.0
+        marking: true
+        clearing: true
+        combination_method: 1
+        raytrace_min_range: 0.0
+        raytrace_max_range: 3.0
+        obstacle_min_range: 0.0
+        obstacle_max_range: 2.5
+
+    inflation_layer:
+      plugin: "nav2_costmap_2d::InflationLayer"
+      enabled: true
+      # radius to inflate costmap around lethal obstacles. Totla size of inflation around obstacles. Includes the robot's footprint (lethal areas) + certain area aound the lethal obstacles (area not recommended for navigation)
+      # has to be >= robot_radius
+      inflation_radius: 0.55 # of which first 0.27 will be the robot's radius; having it too high can result is failure in finiding a path. Or maybe need to change < 99 to < 252
+      cost_scaling_factor: 3.0
