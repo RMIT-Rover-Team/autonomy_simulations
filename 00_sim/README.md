@@ -11,18 +11,41 @@ with a basic sensor suite (Wheel encoders + IMU + 2D LiDAR).
 ## Demo
 
 ### SLAM
+![media/slam-mapping.png](https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/slam.png)
+
+https://github.com/user-attachments/assets/e8d3cc5e-d6db-4d4d-83b4-49e1f233919f
 
 
 ### AMCL
 
+![media/amcl.png](https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/amcl.png)
+
+https://github.com/user-attachments/assets/f0261bf2-e251-41dd-a8fe-07eb80e6cc39
+
 
 ### SLAM_NAV
+
+![media/slam_nav.png](https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/slam_nav.png)
+
+https://github.com/user-attachments/assets/f8eb0987-f70f-4091-a2c8-d2b7a98af1b1
 
 
 ### AMCL_NAV
 
+![media/amcl_nav.png](https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/amcl_nav.png)
+
+https://github.com/user-attachments/assets/104773a8-cdc1-4b0e-bd16-49a4653313d7
+
 
 ### SPEED AND SEPARATION MONITORING
+
+<table>
+  <tr>
+    <td><img src="https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/safety_node1.png" width="300"/></td>
+    <td><img src="https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/safety_node2.png" width="300"/></td>
+    <td><img src="https://github.com/RMIT-Rover-Team/autonomy_simulations/blob/main/00_sim/media/safety_node3.png" width="300"/></td>
+  </tr>
+</table>
 
 ---
 
