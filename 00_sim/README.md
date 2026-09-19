@@ -183,37 +183,6 @@ day-to-day sim session.
 
 ---
 
-## How the packages connect
-
-```
-                          ┌─────────────────────┐
-                          │  my_robot_bringup    │  (top-level orchestrator)
-                          │ simulated_robot.     │
-                          │ launch.py            │
-                          │  mode:=slam|amcl|    │
-                          │  slam_nav|amcl_nav   │
-                          └─────────┬────────────┘
-                                    │ includes
-        ┌────────────┬─────────────┼─────────────┬───────────────────┐
-        ▼            ▼             ▼             ▼                   ▼
- my_robot_        my_robot_    my_robot_     my_robot_           my_robot_
- description      controller   controller    localization        mapping or
- gazebo.launch    controller.  joystick_     local_localization  localization
- .py              launch.py    teleop.       .launch.py (EKF,    (SLAM XOR AMCL,
- (spawns robot                 launch.py     always on)          picked by mode)
- + world in Gz,
- bridges /scan,                                                        │
- /imu, /clock)                                                         ▼
-                                                                 my_robot_navigation
-                                                                 navigation.launch.py
-                                                                 (only when mode is
-                                                                 *_nav) + a second
-                                                                 rviz2 (nav2_default_
-                                                                 view.rviz)
-```
-
----
-
 **Data flow once everything is running:**
 
 1. **`my_robot_description`** spawns the robot into a Gazebo world (`room1` by default) and
@@ -262,27 +231,25 @@ launch file, gated by a single `mode` argument:
 | `slam` (default) | SLAM (`slam_toolbox` + `map_saver_server`) | No map of the space exists yet, or the space changed enough that the old map no longer matches reality. |
 | `amcl` | Global localization (`nav2_map_server` + `nav2_amcl`) against a saved map | A map already exists and you just want the robot to know where it is on it. |
 | `slam_nav` | SLAM + Nav2 + `nav2_default_view.rviz` | You want to navigate goals while simultaneously building the map (exploration-style; the map - and therefore the costmap - can still change under you, including sudden jumps on loop closure). |
-| `amcl_nav` | AMCL + Nav2 + `nav2_default_view.rviz` | The normal "drive the finished robot" case: a map exists, localization is solid, and you want to send goals. |
+| `amcl_nav` | AMCL + Nav2 + `nav2_default_view.rviz` | A map exists, localization is solid, and you want to send goals. |
 
 ```bash
+# View available arguments
+ros2 launch my_robot_bringup simulated_robot.launch.py --show-args
+
 # No map yet - build one
-ros2 launch my_robot_bringup simulated_robot.launch.py
+ros2 launch my_robot_bringup simulated_robot.launch.py [world_name:=<world_name>]
 # (same as mode:=slam)
 
 # Map exists - just localize (against the default map, "room1")
-ros2 launch my_robot_bringup simulated_robot.launch.py mode:=amcl
+ros2 launch my_robot_bringup simulated_robot.launch.py mode:=amcl [world_name:=<world_name> map_name:=<map_name>]
 
 # Map exists - localize AND navigate
-ros2 launch my_robot_bringup simulated_robot.launch.py mode:=amcl_nav
+ros2 launch my_robot_bringup simulated_robot.launch.py mode:=amcl_nav [world_name:=<world_name> map_name:=<map_name>]
 
 # No map yet, but you want to navigate while exploring
-ros2 launch my_robot_bringup simulated_robot.launch.py mode:=slam_nav
+ros2 launch my_robot_bringup simulated_robot.launch.py mode:=slam_nav [world_name:=<world_name>]
 ```
-
-> `simulated_robot.launch.py` doesn't currently expose the world/map choice as its own argument -
-> it always uses `gazebo.launch.py`'s default world (`room1`) and `global_localization.launch.py`'s
-> default map (also `room1`, so the two line up out of the box). To use a different world/map pair
-> (e.g. `test_zone`), edit those two defaults.
 
 In the `_nav` modes, which behavior tree `bt_navigator` runs is controlled by
 `default_bt_xml_filename`, - swap it for one of the other two trees in `behavior_tree/` without editing any
@@ -319,11 +286,11 @@ Explore while mapping? → mode:=slam_nav   → send goals into the still-growin
 ## Building the workspace
 
 ```bash
-cd autonomy_sim_environment
+cd autonomy_simulations
 cd 00_sim # being in this directory is important for the commands below
-source /opt/ros/jazzy/setup.bash
+source /opt/ros/jazzy/setup.bash # source underlay
 rosdep update && sudo rosdep install -i --from-path src --rosdistro jazzy -y && colcon build
-source ./install/setup.bash
+source ./install/setup.bash # source the overlay
 ros2 launch my_robot_bringup simulated_robot.launch.py mode:=slam   # or amcl / slam_nav / amcl_nav
 ```
 
