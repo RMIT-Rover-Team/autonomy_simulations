@@ -107,13 +107,13 @@ def generate_launch_description():
         condition=amcl_condition
     )
 
-    safety_stop = Node(
-        package="my_robot_utils",
-        executable="safety_stop.py",
-        output="screen",
-        parameters=[{"use_sim_time": True}]
+    # safety_stop = Node(
+    #     package="my_robot_utils",
+    #     executable="safety_stop.py",
+    #     output="screen",
+    #     parameters=[{"use_sim_time": True}]
 
-    )
+    # )
 
     navigation = IncludeLaunchDescription(
         os.path.join(
@@ -152,7 +152,7 @@ def generate_launch_description():
         ekf,
         localization,
         slam,
-        safety_stop,
+        # safety_stop,
         navigation,
         rviz
     ])
